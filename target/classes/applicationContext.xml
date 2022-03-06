@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<!--
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -21,29 +15,16 @@ and open the template in the editor.
           http://www.springframework.org/schema/aop  
           http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
  
-
-     Bean definitions go here 
-    <bean id="userIO" class="Flooring.UI.UserIOConsoleImpl"/>
-   
-    <bean id="view" class="Flooring.UI.FlooringView">
-        <constructor-arg ref="userIO"/>
+    <bean id="io"
+         class="Flooring.UI.UserIOConsoleImpl">
     </bean>
-   
-    <bean id="flooringDao"
-         class="Flooring.dao.FlooringFileDaoImpl"/>
+    <bean id="view"
+          class="Flooring.UI.FlooringView">
+        <constructor-arg ref="io"/>
+    </bean>
     
-        <bean id="auditDao" 
-         class="Flooring.dao.FlooringAuditDaoFileImpl"/>
-   
-    <bean id="serviceLayer" 
-         class="Flooring.service.FlooringServiceLayerImpl">
-        <constructor-arg ref="flooringDao"/>
-        <constructor-arg ref="auditDao"/>           
-    </bean>
-   
     <bean id="controller" 
-         class="com.mycompany.Flooring.controller.FlooringCOntroller">
-        <constructor-arg ref="view"/>
-        <constructor-arg ref="dao"/>
+         class="Flooring.controller.FlooringController">
+         <constructor-arg ref="view"/>
      </bean>
-</beans>-->
+</beans>

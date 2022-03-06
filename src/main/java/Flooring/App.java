@@ -19,11 +19,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author mariana.bonish
  */
 public class App {
-//    ApplicationContext ctx = 
-//        new ClassPathXmlApplicationContext("applicationContext.xml");
-//        FlooringController controller = 
-//           ctx.getBean("controller", FlooringController.class);
-    FlooringController cont = new FlooringController(); 
-
-    
+    public static void main(String[] Args){
+    ApplicationContext ctx = 
+        new ClassPathXmlApplicationContext("applicationContext.xml");
+        FlooringController controller = 
+           ctx.getBean("controller", FlooringController.class);
+        controller.run();
+    }
 }

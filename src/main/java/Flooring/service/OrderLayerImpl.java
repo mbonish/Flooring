@@ -9,6 +9,6 @@ package Flooring.service;
  *
  * @author mariana.bonish
  */
-public class FlooringServiceLayerImpl {
+public class OrderLayerImpl {
     
 }

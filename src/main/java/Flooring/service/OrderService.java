@@ -9,6 +9,6 @@ package Flooring.service;
  *
  * @author mariana.bonish
  */
-public interface FlooringService {
+public interface OrderService {
     
 }
