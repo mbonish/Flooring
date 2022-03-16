@@ -12,17 +12,22 @@ import java.util.Objects;
  *
  * @author mariana.bonish
  */
-public class Products {
-    String productType;
+public class Prod {
+    public Prod(String prodType){
+        this.prodType = prodType;
+    }
+    
+    
+    String prodType;
     BigDecimal costPerSquareFoot;
     BigDecimal LaborCostPerSqaureFoot;
 
-    public String getProductType() {
-        return productType;
+    public String getProdType() {
+        return prodType;
     }
 
-    public void setProductType(String productType) {
-        this.productType = productType;
+    public void setProdType(String productType) {
+        this.prodType = productType;
     }
 
     public BigDecimal getCostPerSquareFoot() {
@@ -44,7 +49,7 @@ public class Products {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.productType);
+        hash = 97 * hash + Objects.hashCode(this.prodType);
         hash = 97 * hash + Objects.hashCode(this.costPerSquareFoot);
         hash = 97 * hash + Objects.hashCode(this.LaborCostPerSqaureFoot);
         return hash;
@@ -61,8 +66,8 @@ public class Products {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Products other = (Products) obj;
-        if (!Objects.equals(this.productType, other.productType)) {
+        final Prod other = (Prod) obj;
+        if (!Objects.equals(this.prodType, other.prodType)) {
             return false;
         }
         if (!Objects.equals(this.costPerSquareFoot, other.costPerSquareFoot)) {
@@ -76,8 +81,10 @@ public class Products {
 
     @Override
     public String toString() {
-        return "Products{" + "productType=" + productType + ", costPerSquareFoot=" + costPerSquareFoot + ", LaborCostPerSqaureFoot=" + LaborCostPerSqaureFoot + '}';
+        return "Prod{" + "prodType=" + prodType + ", costPerSquareFoot=" + costPerSquareFoot + ", LaborCostPerSqaureFoot=" + LaborCostPerSqaureFoot + '}';
     }
+
+
     
     
 }

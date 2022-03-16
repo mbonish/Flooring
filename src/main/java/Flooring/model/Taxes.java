@@ -13,17 +13,22 @@ import java.util.Objects;
  * @author mariana.bonish
  */
 public class Taxes {
-    String stateAbreviation;
+    public Taxes(String stateId){
+        this.stateId = stateId;
+    }
+    String stateId;
     String stateName;
     BigDecimal taxRate;
 
-    public String getStateAbreviation() {
-        return stateAbreviation;
+    public String getStateId() {
+        return stateId;
     }
 
-    public void setStateAbreviation(String stateAbreviation) {
-        this.stateAbreviation = stateAbreviation;
+    public void setStateId(String stateId) {
+        this.stateId = stateId;
     }
+
+    
 
     public String getStateName() {
         return stateName;
@@ -44,7 +49,7 @@ public class Taxes {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 11 * hash + Objects.hashCode(this.stateAbreviation);
+        hash = 11 * hash + Objects.hashCode(this.stateId);
         hash = 11 * hash + Objects.hashCode(this.stateName);
         hash = 11 * hash + Objects.hashCode(this.taxRate);
         return hash;
@@ -62,7 +67,7 @@ public class Taxes {
             return false;
         }
         final Taxes other = (Taxes) obj;
-        if (!Objects.equals(this.stateAbreviation, other.stateAbreviation)) {
+        if (!Objects.equals(this.stateId, other.stateId)) {
             return false;
         }
         if (!Objects.equals(this.stateName, other.stateName)) {
@@ -73,8 +78,9 @@ public class Taxes {
 
     @Override
     public String toString() {
-        return "Taxes{" + "stateAbreviation=" + stateAbreviation + ", stateName=" + stateName + ", taxRate=" + taxRate + '}';
+        return "Taxes{" + "stateId=" + stateId + ", stateName=" + stateName + ", taxRate=" + taxRate + '}';
     }
-    
+
+
     
 }

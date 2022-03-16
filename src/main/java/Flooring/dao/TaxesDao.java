@@ -5,10 +5,17 @@
  */
 package Flooring.dao;
 
+import Flooring.model.Taxes;
+import java.util.List;
+
 /**
  *
  * @author mariana.bonish
  */
 public interface TaxesDao {
+    
+   public Taxes getTax(String stateId)throws TaxesException;      
+   
+   public List<Taxes> getAllTaxes()throws TaxesException;
     
 }
