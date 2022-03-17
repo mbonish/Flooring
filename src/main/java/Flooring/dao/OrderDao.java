@@ -6,6 +6,7 @@
 package Flooring.dao;
 
 import Flooring.model.Order;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -18,9 +19,9 @@ public interface OrderDao {
    
     public Order getOrder(Order order)throws OrderException;
     
-    public List<Order> getAllOrders()throws OrderException; 
+    public List<Order> getAllOrders(LocalDate date)throws OrderException; 
   
-    public Order removeOrder(int orderId) throws OrderException;
+    public Order removeOrder(Order order) throws OrderException;
     
     public Order editOrder(int orderId) throws OrderException;
 
