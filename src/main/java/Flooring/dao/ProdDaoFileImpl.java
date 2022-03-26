@@ -39,7 +39,7 @@ public class ProdDaoFileImpl implements ProdDao {
     private final Map<String, Prod> Prods = new HashMap<>();
 
     @Override
-    public Prod addProd(Prod prod) throws ProdException {
+    public Prod addProd(Prod prod) throws FlooringPersistenceException {
         loadProds();
         String prodType = prod.getProdType();
         Prod prevProd = Prods.put(prodType, prod);
@@ -49,27 +49,27 @@ public class ProdDaoFileImpl implements ProdDao {
     }
 
     @Override
-    public List<Prod> getAllProds()throws ProdException {
+    public List<Prod> getAllProds()throws FlooringPersistenceException {
         loadProds();
         return new ArrayList<Prod>(Prods.values());
         
     }
 
     @Override
-    public Prod getProd(String prodType)throws ProdException {
+    public Prod getProd(String prodType)throws FlooringPersistenceException {
         loadProds();
         return Prods.get(prodType);
     }
 
     @Override
-    public Prod removeProd(String prodType)throws ProdException  { 
+    public Prod removeProd(String prodType)throws FlooringPersistenceException  { 
         loadProds();
         Prod removedProd = Prods.remove(prodType);
         return removedProd;
     }
 
     @Override
-    public Prod editProd(String prodType)throws ProdException  {
+    public Prod editProd(String prodType)throws FlooringPersistenceException  {
         loadProds();
         return Prods.get(prodType);
     }
@@ -92,7 +92,7 @@ public class ProdDaoFileImpl implements ProdDao {
         return prodFromFile;
     }
 
-    private void loadProds() throws ProdException {
+    private void loadProds() throws FlooringPersistenceException {
         Scanner scanner;
 
         try {
@@ -101,7 +101,7 @@ public class ProdDaoFileImpl implements ProdDao {
                             new BufferedReader(
                                     new FileReader(PROD_FILE)));
         } catch (FileNotFoundException e) {
-            throw new ProdException(
+            throw new FlooringPersistenceException(
                     "Could not load Product Data", e);
         }
 
@@ -127,14 +127,14 @@ public class ProdDaoFileImpl implements ProdDao {
         return prodAsText;
     }
 
-    private void writeProds() throws ProdException {
+    private void writeProds() throws FlooringPersistenceException {
         PrintWriter out;
 
         try {
             out = new PrintWriter(
                     new FileWriter(PROD_FILE));
         }catch (IOException e) {
-            throw new ProdException(
+            throw new FlooringPersistenceException(
                     "Could not save Product data.", e);
         }
         String prodAsText;

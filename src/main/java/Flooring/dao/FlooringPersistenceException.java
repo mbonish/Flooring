@@ -8,12 +8,12 @@ package Flooring.dao;
  *
  * @author mariana.bonish
  */
-public class OrderException extends Exception {
-    public OrderException (String message){
+public class FlooringPersistenceException extends Exception {
+    public FlooringPersistenceException (String message){
         super(message);
     }
     
-    public OrderException(String message, Throwable cause){
+    public FlooringPersistenceException(String message, Throwable cause){
         super(message, cause);
     }
 }

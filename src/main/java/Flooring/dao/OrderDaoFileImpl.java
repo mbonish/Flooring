@@ -15,7 +15,6 @@ import java.io.PrintWriter;
 import static java.lang.Integer.parseInt;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +34,7 @@ public class OrderDaoFileImpl implements OrderDao {
     private Map<Integer, Order> Orders = new HashMap<>();
 
     @Override
-    public Order addOrder(Order order) throws OrderException {
+    public Order addOrder(Order order) throws FlooringPersistenceException {
         loadOrders(order.getDate());
         Orders.put(order.getOrderId(), order);
         writeOrders();
@@ -43,19 +42,19 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public Order getOrder(Order order) throws OrderException {
+    public Order getOrder(Order order) throws FlooringPersistenceException {
         loadOrders(order.getDate());
         return order;
     }
 
     @Override
-    public List<Order> getAllOrders(LocalDate date) throws OrderException {
+    public List<Order> getAllOrders(LocalDate date) throws FlooringPersistenceException {
         loadOrders(date);
         return new ArrayList(Orders.values());
     }
 
     @Override
-    public Order removeOrder(Order order) throws OrderException {
+    public Order removeOrder(Order order) throws FlooringPersistenceException {
         loadOrders(order.getDate());
         Order removedOrder = Orders.remove(order.getOrderId());
         writeOrders();
@@ -65,11 +64,12 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public Order editOrder(Order order) throws OrderException {
+    public Order editOrder(Order order) throws FlooringPersistenceException {
         getOrder(order);
         removeOrder(order);
-        
+        return order;
     }
+    
 
     private Order unmarshallOrder(String OrderAsText) {
         String[] OrderTokens = OrderAsText.split(DELIMITER);
@@ -94,7 +94,7 @@ public class OrderDaoFileImpl implements OrderDao {
         BigDecimal laborCostPerSqFt = new BigDecimal(OrderTokens[7]);
         OrderFromFile.setLaborCostPerSquareFoot(laborCostPerSqFt);
 
-        BigDecimal materialCost = new BigDecimal(OrderTokens[8]);
+        BigDecimal materialCost = new BigDecimal(OrderTokens[8]); 
         OrderFromFile.setMaterialCost(materialCost);
 
         BigDecimal laborCost = new BigDecimal(OrderTokens[9]);
@@ -109,12 +109,13 @@ public class OrderDaoFileImpl implements OrderDao {
         return OrderFromFile;
 
     }
+    
 
-    private void loadOrders(LocalDate date) throws OrderException {
+    private void loadOrders(LocalDate date) throws FlooringPersistenceException {
         Scanner scanner;
         
-        String formattedDate = date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        String nameOfFile = "Order_" + formattedDate+ ".txt";
+        String formattedDate = date.format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+        String nameOfFile = "Orders_" + formattedDate+ ".txt";
 
         try {
             scanner
@@ -127,14 +128,20 @@ public class OrderDaoFileImpl implements OrderDao {
         }
         String currentLine;
         Order currentOrder;
-
+        
+        boolean firstLine = true;
         while (scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
+            if(firstLine){
+                firstLine =false;
+                continue;
+            }
 
             currentOrder = unmarshallOrder(currentLine);
 
             Orders.put(currentOrder.getOrderId(), currentOrder);
         }
+        scanner.close();
     }
 
     private String marshallOrder(Order anOrder) {
@@ -155,18 +162,18 @@ public class OrderDaoFileImpl implements OrderDao {
 
     }
 
-    private void writeOrders() throws OrderException {
+    private void writeOrders() throws FlooringPersistenceException {
         PrintWriter out;
         Order orderForDate = Orders.get(0);
         LocalDate orderDate = orderForDate.getDate();
-        String formattedDate = orderDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        String formattedDate = orderDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         String nameOfFile = "Order_" + formattedDate + ".txt";
       
             try {
                 out = new PrintWriter(
                         new FileWriter(nameOfFile));
             } catch (IOException e) {
-                throw new OrderException(
+                throw new FlooringPersistenceException(
                         "Could not save order Data.", e);
             }
             List<Order> orderList = this.getAllOrders(orderDate);
@@ -179,4 +186,5 @@ public class OrderDaoFileImpl implements OrderDao {
             out.close();
 
     }
+    
 }

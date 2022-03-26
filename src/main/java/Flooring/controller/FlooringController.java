@@ -6,8 +6,13 @@
 package Flooring.controller;
 
 import Flooring.UI.FlooringView;
+import Flooring.dao.FlooringPersistenceException;
+import Flooring.model.Order;
+import Flooring.service.FlooringService;
+import Flooring.service.FlooringValidationException;
+import java.time.LocalDate;
 import java.util.List;
-import org.springframework.core.annotation.Order;
+
 
 /**
  *
@@ -16,14 +21,16 @@ import org.springframework.core.annotation.Order;
 public class FlooringController {
 
     FlooringView view;
+    FlooringService service;
 
-    public FlooringController(FlooringView view) {
+    public FlooringController(FlooringView view, FlooringService service) {
         this.view = view;
+        this.service = service;
     }
     int menuSelection = 0;
     boolean keepGoing = true;
 
-    public void run() {
+    public void run() throws FlooringValidationException, FlooringPersistenceException {
 
         while (keepGoing) {
             view.menu();
@@ -32,6 +39,7 @@ public class FlooringController {
             switch (menuSelection) {
                 case 1:
                     viewAllOrders();
+                    break;
                 case 2:
                     addOrder();
                 case 3:
@@ -47,19 +55,26 @@ public class FlooringController {
 
     }
     //will need to return a list 
-    private void viewAllOrders(){
+    private void viewAllOrders() throws FlooringValidationException, FlooringPersistenceException{
+        String userDate = view.getDateFromUser();
+        LocalDate date = service.validateDate(userDate);
         //ask the users for a date- then display orders on the date
+        List<Order> orders = service.getAllOrders(date);
+        view.displayOrders(orders);
     }
     
-    private void addOrder(){
-        //need to ask the user for the following information
-        //orderdate--future
-        //name--must not be blank -a-z 09 . and coma's
-        //state
-        //product type-show a list
-        //area- postive decimal with at leat 100sqft
+    private void addOrder() throws FlooringValidationException{
+        String userDate = view.getDateFromUser();
+        String customerName = view.getCustomerName();
+        String state = view.getState();
+        String prodType = view.getProductType();
+        int area = view.getArea();
+        LocalDate date = service.validateDate(userDate);
+        Order priorOrder = new Order(date);
         
-        //all the other fields will be calculated 
+        
+        
+       service
     }
     
     private void editOrder(){

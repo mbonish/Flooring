@@ -8,6 +8,14 @@ package Flooring.service;
  *
  * @author mariana.bonish
  */
-public class TaxesServicesImpl {
+public class FlooringValidationException extends Exception {
+    
+    public FlooringValidationException(String message){
+        super(message);
+    }
+    
+    public FlooringValidationException(String message, Throwable cause){
+        super(message, cause);
+    }
     
 }

@@ -14,14 +14,14 @@ import java.util.List;
  * @author mariana.bonish
  */
 public interface ProdDao {
-     Prod addProd(Prod product)throws ProdException ;
+     Prod addProd(Prod product)throws FlooringPersistenceException ;
      
-     List<Prod> getAllProds()throws ProdException;
+     List<Prod> getAllProds()throws FlooringPersistenceException;
      
-     Prod getProd(String prodType)throws ProdException;
+     Prod getProd(String prodType)throws FlooringPersistenceException;
      
-     Prod removeProd(String prodType)throws ProdException;
+     Prod removeProd(String prodType)throws FlooringPersistenceException;
      
-     Prod editProd(String prodType)throws ProdException;
+     Prod editProd(String prodType)throws FlooringPersistenceException;
 }
 

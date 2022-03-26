@@ -19,13 +19,13 @@ import java.util.Scanner;
  *
  * @author mariana.bonish
  */
-public class TaxesDaoFileImpl implements TaxesDao{
+public class TaxDaoFileImpl implements TaxDao{
 private final String TAXES_FILE;
 
-    public TaxesDaoFileImpl(){
+    public TaxDaoFileImpl(){
         TAXES_FILE = "taxes.txt";
     }
-     public TaxesDaoFileImpl(String taxesTextFile){
+     public TaxDaoFileImpl(String taxesTextFile){
         TAXES_FILE = taxesTextFile;
     }
 
@@ -34,13 +34,13 @@ private final String TAXES_FILE;
     private final Map<String, Taxes> TaxesMap = new HashMap<>();
     
     @Override
-    public Taxes getTax(String stateId) throws TaxesException {
+    public Taxes getTax(String stateId) throws FlooringPersistenceException {
         loadTaxes();
         return TaxesMap.get(stateId);
     }
 
     @Override
-    public List<Taxes> getAllTaxes() throws TaxesException {
+    public List<Taxes> getAllTaxes() throws FlooringPersistenceException {
         loadTaxes();
         return new ArrayList<Taxes>(TaxesMap.values());
         
@@ -58,7 +58,7 @@ private final String TAXES_FILE;
         
         return TaxesFromFile;
     }
-    private void loadTaxes()throws TaxesException{   
+    private void loadTaxes()throws FlooringPersistenceException{   
         Scanner scanner;
         
         try{
@@ -67,7 +67,7 @@ private final String TAXES_FILE;
                     new BufferedReader(
                         new FileReader(TAXES_FILE)));
             }catch (FileNotFoundException e){
-                throw new TaxesException(
+                throw new FlooringPersistenceException(
                 "Could not load taxes into memory.",e);
             }
         String currentLine;

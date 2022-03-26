@@ -5,6 +5,9 @@
  */
 package Flooring.UI;
 
+import Flooring.model.Order;
+import java.util.List;
+
 /**
  *
  * @author mariana.bonish
@@ -33,4 +36,38 @@ public class FlooringView {
         return io.readInt("Please select option 1-6");
     }
     
+    public String getDateFromUser(){
+        return io.readString("Please enter a date for the order.");
+    }
+    
+   public void displayOrders(List<Order> orderList){
+       for(Order currentOrder: orderList){
+           io.print(currentOrder.getOrderId()+ ": " +
+                   currentOrder.getCustomerName()+ ": " +
+                   currentOrder.getState()+ ": " +
+                   currentOrder.getTaxRate()+ ": " +
+                   currentOrder.getProductType()+ ": " +
+                   currentOrder.getArea()+ ": "+
+                   currentOrder.getCostPerSquareFoot()+ ": "+
+                   currentOrder.getLaborCostPerSquareFoot()+ ": "+
+                   currentOrder.getMaterialCost()+ ": " +
+                   currentOrder.getLaborCostTotal()+ ": "+
+                   currentOrder.getTax()+ ": "+
+                   currentOrder.getTotal());
+       }
+   }
+
+   public String getCustomerName(){
+       return io.readString("Please enter customer name?");
+   }
+   public String getState(){
+       return io.readString("Please enter state. (ex OH, MN)");
+   }
+   public String getProductType(){
+       return io.readString("Please enter the prodcut type");
+   }
+   public int getArea(){
+       return io.readInt("Please enter an area.");
+   }
 }
+

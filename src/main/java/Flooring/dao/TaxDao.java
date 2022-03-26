@@ -12,10 +12,10 @@ import java.util.List;
  *
  * @author mariana.bonish
  */
-public interface TaxesDao {
+public interface TaxDao {
     
-   public Taxes getTax(String stateId)throws TaxesException;      
+   public Taxes getTax(String stateId)throws FlooringPersistenceException;      
    
-   public List<Taxes> getAllTaxes()throws TaxesException;
+   public List<Taxes> getAllTaxes()throws FlooringPersistenceException;
     
 }
