@@ -73,8 +73,14 @@ private final String TAXES_FILE;
         String currentLine;
         Taxes currentTaxes;
         
-        while(scanner.hasNextLine()){
+                
+        boolean firstLine = true;
+        while (scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
+            if(firstLine){
+                firstLine =false;
+                continue;
+            }
             
             currentTaxes = unmarshallTaxes(currentLine);
             

@@ -10,6 +10,7 @@ import Flooring.dao.FlooringPersistenceException;
 import Flooring.model.Order;
 import Flooring.service.FlooringService;
 import Flooring.service.FlooringValidationException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -63,18 +64,32 @@ public class FlooringController {
         view.displayOrders(orders);
     }
     
-    private void addOrder() throws FlooringValidationException{
+    private void addOrder() throws FlooringValidationException, FlooringPersistenceException{
         String userDate = view.getDateFromUser();
+        LocalDate date2 = service.validateDate(userDate);
         String customerName = view.getCustomerName();
         String state = view.getState();
         String prodType = view.getProductType();
         int area = view.getArea();
-        LocalDate date = service.validateDate(userDate);
-        Order priorOrder = new Order(date);
+        BigDecimal areaB = new BigDecimal(area);
         
+        Order priorOrder = new Order();
+        priorOrder.setDate(date2);
+        priorOrder.setCustomerName(customerName);
+        priorOrder.setState(state);
+        priorOrder.setArea(areaB);
+        priorOrder.setProductType(prodType);
         
+        service.createOrder(priorOrder);
+        service.calculateOrder(priorOrder);
+    
         
-       service
+        view.displayOrder(priorOrder);
+        
+        String confirmOrderDetails =view.confirmOrderDetails();
+        if(confirmOrderDetails.equals("y")){
+            service.addOrder(priorOrder);
+        }      
     }
     
     private void editOrder(){

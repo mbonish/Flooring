@@ -12,7 +12,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.Integer.parseInt;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -76,7 +75,7 @@ public class OrderDaoFileImpl implements OrderDao {
 
         String orderId = OrderTokens[0];
 
-        Order OrderFromFile = new Order(parseInt(orderId));
+        Order OrderFromFile = new Order();
 
         OrderFromFile.setCustomerName(OrderTokens[1]);
         OrderFromFile.setState(OrderTokens[2]);
@@ -186,5 +185,14 @@ public class OrderDaoFileImpl implements OrderDao {
             out.close();
 
     }
+    public int getNextId(LocalDate date) throws FlooringPersistenceException {
+         int largestId = 0;
+        List<Integer> ids = new ArrayList<Integer>(Orders.keySet());
+        for(int currentId: ids)
+            if(largestId < currentId) {
+                largestId = currentId;
+            }
+        return largestId+1;
+     }
     
 }

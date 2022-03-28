@@ -27,7 +27,7 @@ public class ProdDaoFileImpl implements ProdDao {
     private final String PROD_FILE;
 
     public ProdDaoFileImpl() {
-        PROD_FILE = "prod.txt";
+        PROD_FILE = "Products.txt";
 
     }
 
@@ -39,37 +39,14 @@ public class ProdDaoFileImpl implements ProdDao {
     private final Map<String, Prod> Prods = new HashMap<>();
 
     @Override
-    public Prod addProd(Prod prod) throws FlooringPersistenceException {
-        loadProds();
-        String prodType = prod.getProdType();
-        Prod prevProd = Prods.put(prodType, prod);
-        writeProds();
-        return prevProd;
-        
-    }
-
-    @Override
-    public List<Prod> getAllProds()throws FlooringPersistenceException {
+    public List<Prod> getAllProds() throws FlooringPersistenceException {
         loadProds();
         return new ArrayList<Prod>(Prods.values());
-        
+
     }
 
     @Override
-    public Prod getProd(String prodType)throws FlooringPersistenceException {
-        loadProds();
-        return Prods.get(prodType);
-    }
-
-    @Override
-    public Prod removeProd(String prodType)throws FlooringPersistenceException  { 
-        loadProds();
-        Prod removedProd = Prods.remove(prodType);
-        return removedProd;
-    }
-
-    @Override
-    public Prod editProd(String prodType)throws FlooringPersistenceException  {
+    public Prod getProd(String prodType) throws FlooringPersistenceException {
         loadProds();
         return Prods.get(prodType);
     }
@@ -109,42 +86,17 @@ public class ProdDaoFileImpl implements ProdDao {
         String currentLine;
         Prod currentProd;
 
+        boolean firstLine = true;
         while (scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
-
+            if (firstLine) {
+                firstLine = false;
+                continue;
+            }
             currentProd = unmarshallProd(currentLine);
 
             Prods.put(currentProd.getProdType(), currentProd);
         }
 
-    }
-
-    private String marshallProd(Prod aProd) {
-        String prodAsText = aProd.getProdType() + DELIMITER;
-        prodAsText += aProd.getCostPerSquareFoot() + DELIMITER;
-        prodAsText += aProd.getLaborCostPerSqaureFoot();
-
-        return prodAsText;
-    }
-
-    private void writeProds() throws FlooringPersistenceException {
-        PrintWriter out;
-
-        try {
-            out = new PrintWriter(
-                    new FileWriter(PROD_FILE));
-        }catch (IOException e) {
-            throw new FlooringPersistenceException(
-                    "Could not save Product data.", e);
-        }
-        String prodAsText;
-        
-        List<Prod> ProdList = this.getAllProds();
-        for(Prod currentProd: ProdList){
-            prodAsText= marshallProd(currentProd);
-            out.println(prodAsText);
-            out.flush();         
-        }
-        out.close();
     }
 }

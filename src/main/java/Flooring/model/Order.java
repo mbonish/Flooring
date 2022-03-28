@@ -14,9 +14,6 @@ import java.util.Objects;
  */
 public class Order {
     
-    public Order(int orderId){
-        this.orderId = orderId;
-    }
     int orderId;
     LocalDate date; 
     String customerName;

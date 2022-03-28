@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import Flooring.dao.TaxDao;
+import java.util.ArrayList;
 
 /**
  *
@@ -35,14 +36,14 @@ public class FlooringServiceImpl implements FlooringService {
         this.auditDao = auditDao;
     }
 
-    public void validateCustomerName(String customerName) throws FlooringValidationException {
-        if (customerName == null
-                || (customerName.trim().length() == 0)
-                || (!customerName.matches("^[a-zA-Z0-9,. ]+$")));
-        throw new FlooringValidationException(""
-                + "ERROR: Must only contain alphanumeric charaters, periods or comas."
-        );
-    }
+//    public void validateCustomerName(Order order) throws FlooringValidationException {
+//        if (order.getCustomerName() == null
+//                || order.getCustomerName().trim().length() == 0
+//                || !order.getCustomerName().matches("^[A-Za-z\\\\s,.`]+$"));
+//        throw new FlooringValidationException(""
+//                + "ERROR: Customer name may only contain alphanumeric charaters, periods or comas."
+//        );
+//    }
 
     public void validateArea(int area) throws FlooringValidationException {
         if (area >= 100) {
@@ -61,12 +62,12 @@ public class FlooringServiceImpl implements FlooringService {
         //check for format 
         if (!dateFromUser.matches("^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$")) {
             throw new FlooringValidationException(
-                    "ERROR: Invalid date format-- date must be mm/dd/yyyy");
+                    "ERROR: Invalid date format-- date must be mm/dd/yyyy.");
         
         } else if (localDate.isBefore(localDate)
                 || localDate == LocalDate.now()) {
             throw new FlooringValidationException(""
-                    + "ERROR this is not a date in the future");
+                    + "ERROR this is not a date in the future.");
         }else return localDate;
 
     }
@@ -74,24 +75,24 @@ public class FlooringServiceImpl implements FlooringService {
     public void validateState(String state) throws FlooringPersistenceException, FlooringValidationException {
         List<Taxes> taxes = taxDao.getAllTaxes();
         for (Taxes tax : taxes) {
-            if (tax.getStateName() == state) {
+            if (tax.getStateId().equals(state)) {
                 return;
             }
         }
         throw new FlooringValidationException(
-                "No state matching in file");
+                "No state matching in file.");
 
     }
 
     public void validateProd(String prodType) throws FlooringPersistenceException, FlooringValidationException {
         List<Prod> prods = prodDao.getAllProds();
         for (Prod prod1 : prods) {
-            if (prod1.getProdType() == prodType) {
+            if (prod1.getProdType().equals(prodType)) {
                 return;
             }
         }
         throw new FlooringValidationException(
-                "No state matching in file");
+                "No prod matching in file");
 
     }
 
@@ -100,7 +101,8 @@ public class FlooringServiceImpl implements FlooringService {
 //        validateDate(order.getDate());
 
         // validate customer name 
-        validateCustomerName(order.getCustomerName());
+//        validateCustomerName(order);
+
 
         //validate State
         validateState(order.getState());
@@ -116,16 +118,17 @@ public class FlooringServiceImpl implements FlooringService {
     public Order calculateOrder(Order order) throws FlooringPersistenceException {
          
         //Get the tax rate 
-            
+        int orderId = orderDao.getNextId(order.getDate());
+        order.setOrderId(orderId);
+        
         Taxes theRate = taxDao.getTax(order.getState());
         BigDecimal taxRate = theRate.getTaxRate();
 
         //Get the prodcut
         Prod theProd = prodDao.getProd(order.getProductType());
         BigDecimal costPerSquareFoot = theProd.getCostPerSquareFoot();
-        BigDecimal laborCostPerSquareFoot = theProd.getCostPerSquareFoot();
+        BigDecimal laborCostPerSquareFoot = theProd.getLaborCostPerSqaureFoot();
 
-        //set order valuse from other daos
         //Set tax rate, cost per square foot, labor cost per sqft
         order.setTaxRate(taxRate);
         order.setCostPerSquareFoot(costPerSquareFoot);
@@ -133,17 +136,17 @@ public class FlooringServiceImpl implements FlooringService {
         //Calculate material cost, labor cost, taxes and total cost
 
         //material cost = (area * cost per sqFt)
-        BigDecimal materialCost = order.getArea().multiply(order.getCostPerSquareFoot());
+        BigDecimal materialCost = order.getArea().multiply(costPerSquareFoot);
 
         //laborCost = (area * laborCost per sqFt)
-        BigDecimal laborCost = order.getArea().multiply(order.getLaborCostPerSquareFoot());
+        BigDecimal laborCost = order.getArea().multiply(laborCostPerSquareFoot);
 
         //taxTotal = (material + labor) * (taxRate/100)
         BigDecimal materialAndLabor = materialCost.add(laborCost);
         BigDecimal oneHundred = new BigDecimal(100);
         BigDecimal tax = order.getTaxRate().multiply(oneHundred);
 
-        BigDecimal taxTotal = materialAndLabor.multiply(tax);
+        BigDecimal taxTotal = materialAndLabor.multiply(taxRate);
 
         //total = (material cost + labor cost +tax total)
         BigDecimal total = materialCost.add(laborCost).add(taxTotal);
@@ -158,29 +161,26 @@ public class FlooringServiceImpl implements FlooringService {
 
     }
 
-    public Order createOrder(Order order) throws FlooringValidationException, FlooringPersistenceException {
+    public void createOrder(Order order) throws FlooringValidationException, FlooringPersistenceException {
 
         validateOrder(order);
 
-        Order orderBefore = new Order(order.getOrderId());
-        //get order number
-        //***need method 
-        //from validation/user input
+        Order orderBefore = new Order();
         orderBefore.setDate(order.getDate());
         orderBefore.setCustomerName(order.getCustomerName());
         orderBefore.setState(order.getState());
         orderBefore.setArea(order.getArea());
 
      //from calculations 
-        orderBefore.setTaxRate(order.getTaxRate());
-        orderBefore.setCostPerSquareFoot(order.getCostPerSquareFoot());
-        orderBefore.setLaborCostPerSquareFoot(order.getLaborCostPerSquareFoot());
-        orderBefore = calculateOrder(order);
-        orderBefore.setMaterialCost(order.getLaborCostTotal());
-        orderBefore.setTax(order.getTax());
-        orderBefore.setTotal(order.getTotal());
-
-        return orderBefore;
+//        orderBefore.setTaxRate(order.getTaxRate());
+//        orderBefore.setCostPerSquareFoot(order.getCostPerSquareFoot());
+//        orderBefore.setLaborCostPerSquareFoot(order.getLaborCostPerSquareFoot());
+//        orderBefore = calculateOrder(order);
+//        orderBefore.setMaterialCost(order.getLaborCostTotal());
+//        orderBefore.setTax(order.getTax());
+//        orderBefore.setTotal(order.getTotal());
+//
+//        return orderBefore;
     }
     
 
