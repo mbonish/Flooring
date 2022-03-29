@@ -36,7 +36,7 @@ public class OrderDaoFileImpl implements OrderDao {
     public Order addOrder(Order order) throws FlooringPersistenceException {
         loadOrders(order.getDate());
         Orders.put(order.getOrderId(), order);
-        writeOrders();
+        writeOrders(order);
         return order;
     }
 
@@ -56,7 +56,7 @@ public class OrderDaoFileImpl implements OrderDao {
     public Order removeOrder(Order order) throws FlooringPersistenceException {
         loadOrders(order.getDate());
         Order removedOrder = Orders.remove(order.getOrderId());
-        writeOrders();
+        writeOrders(order);
         return removedOrder;
         
         
@@ -113,7 +113,7 @@ public class OrderDaoFileImpl implements OrderDao {
     private void loadOrders(LocalDate date) throws FlooringPersistenceException {
         Scanner scanner;
         
-        String formattedDate = date.format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+        String formattedDate = date.format(DateTimeFormatter.ofPattern("MMddyyyy"));
         String nameOfFile = "Orders_" + formattedDate+ ".txt";
 
         try {
@@ -161,12 +161,14 @@ public class OrderDaoFileImpl implements OrderDao {
 
     }
 
-    private void writeOrders() throws FlooringPersistenceException {
+    private void writeOrders(Order order) throws FlooringPersistenceException {
         PrintWriter out;
-        Order orderForDate = Orders.get(0);
-        LocalDate orderDate = orderForDate.getDate();
-        String formattedDate = orderDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        String nameOfFile = "Order_" + formattedDate + ".txt";
+        
+//        Order orderForDate = Orders.get(1);
+//        LocalDate orderDate = orderForDate.getDate();
+        LocalDate orderDate =order.getDate();
+        String formattedDate = orderDate.format(DateTimeFormatter.ofPattern("MMddyyyy"));
+        String nameOfFile = "Orders_" + formattedDate + ".txt";
       
             try {
                 out = new PrintWriter(
@@ -175,9 +177,10 @@ public class OrderDaoFileImpl implements OrderDao {
                 throw new FlooringPersistenceException(
                         "Could not save order Data.", e);
             }
-            List<Order> orderList = this.getAllOrders(orderDate);
-             String orderAsText;
-            for (Order currentOrder : orderList) {
+           
+            
+            String orderAsText;
+            for (Order currentOrder : Orders.values()) {
                 orderAsText = marshallOrder(currentOrder);
                 out.println(orderAsText);
                 out.flush();

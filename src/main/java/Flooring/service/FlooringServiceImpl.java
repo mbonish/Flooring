@@ -57,12 +57,12 @@ public class FlooringServiceImpl implements FlooringService {
 
 //validate the date on the order
     public LocalDate validateDate(String dateFromUser) throws FlooringValidationException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate localDate = LocalDate.parse(dateFromUser, formatter);
         //check for format 
         if (!dateFromUser.matches("^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$")) {
             throw new FlooringValidationException(
-                    "ERROR: Invalid date format-- date must be mm/dd/yyyy.");
+                    "ERROR: Invalid date format-- date must be MM/dd/yyyy.");
         
         } else if (localDate.isBefore(localDate)
                 || localDate == LocalDate.now()) {
