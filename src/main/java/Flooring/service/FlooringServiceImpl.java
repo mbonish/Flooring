@@ -117,10 +117,7 @@ public class FlooringServiceImpl implements FlooringService {
 
     public Order calculateOrder(Order order) throws FlooringPersistenceException {
          
-        //Get the tax rate 
-        int orderId = orderDao.getNextId(order.getDate());
-        order.setOrderId(orderId);
-        
+        //Get the tax rate  
         Taxes theRate = taxDao.getTax(order.getState());
         BigDecimal taxRate = theRate.getTaxRate();
 
@@ -164,23 +161,12 @@ public class FlooringServiceImpl implements FlooringService {
     public void createOrder(Order order) throws FlooringValidationException, FlooringPersistenceException {
 
         validateOrder(order);
-
         Order orderBefore = new Order();
         orderBefore.setDate(order.getDate());
         orderBefore.setCustomerName(order.getCustomerName());
         orderBefore.setState(order.getState());
         orderBefore.setArea(order.getArea());
 
-     //from calculations 
-//        orderBefore.setTaxRate(order.getTaxRate());
-//        orderBefore.setCostPerSquareFoot(order.getCostPerSquareFoot());
-//        orderBefore.setLaborCostPerSquareFoot(order.getLaborCostPerSquareFoot());
-//        orderBefore = calculateOrder(order);
-//        orderBefore.setMaterialCost(order.getLaborCostTotal());
-//        orderBefore.setTax(order.getTax());
-//        orderBefore.setTotal(order.getTotal());
-//
-//        return orderBefore;
     }
     
 
@@ -191,7 +177,7 @@ public class FlooringServiceImpl implements FlooringService {
     @Override
     public Order addOrder(Order order) throws FlooringPersistenceException {
         return orderDao.addOrder(order);
-
+        
     }
 
     @Override

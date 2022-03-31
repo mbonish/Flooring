@@ -1,0 +1,4 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+0,bad,TX,4.45,Wood,123,5.15,4.75,633.45,584.25,445.00,6636.4650
+1,marianafdlksajdlkjalkdas,TX,4.45,Tile,123,3.50,4.15,430.50,510.45,445.00,5128.1775
+2,dlkjaslkdjas,TX,4.45,Wood,123,5.15,4.75,633.45,584.25,445.00,6636.4650

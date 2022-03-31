@@ -35,6 +35,8 @@ public class OrderDaoFileImpl implements OrderDao {
     @Override
     public Order addOrder(Order order) throws FlooringPersistenceException {
         loadOrders(order.getDate());
+        int orderId = getNextId(order.getDate());
+        order.setOrderId(orderId);
         Orders.put(order.getOrderId(), order);
         writeOrders(order);
         return order;
@@ -58,8 +60,7 @@ public class OrderDaoFileImpl implements OrderDao {
         Order removedOrder = Orders.remove(order.getOrderId());
         writeOrders(order);
         return removedOrder;
-        
-        
+
     }
 
     @Override
@@ -68,20 +69,21 @@ public class OrderDaoFileImpl implements OrderDao {
         removeOrder(order);
         return order;
     }
-    
 
     private Order unmarshallOrder(String OrderAsText) {
         String[] OrderTokens = OrderAsText.split(DELIMITER);
 
         String orderId = OrderTokens[0];
+        
 
         Order OrderFromFile = new Order();
-
+        
+        OrderFromFile.setOrderId(Integer.parseInt(orderId));
         OrderFromFile.setCustomerName(OrderTokens[1]);
         OrderFromFile.setState(OrderTokens[2]);
 
         BigDecimal taxRate = new BigDecimal(OrderTokens[3]);
-        OrderFromFile.setTax(taxRate);
+        OrderFromFile.setTaxRate(taxRate);
         OrderFromFile.setProductType(OrderTokens[4]);
 
         BigDecimal area = new BigDecimal(OrderTokens[5]);
@@ -93,7 +95,7 @@ public class OrderDaoFileImpl implements OrderDao {
         BigDecimal laborCostPerSqFt = new BigDecimal(OrderTokens[7]);
         OrderFromFile.setLaborCostPerSquareFoot(laborCostPerSqFt);
 
-        BigDecimal materialCost = new BigDecimal(OrderTokens[8]); 
+        BigDecimal materialCost = new BigDecimal(OrderTokens[8]);
         OrderFromFile.setMaterialCost(materialCost);
 
         BigDecimal laborCost = new BigDecimal(OrderTokens[9]);
@@ -108,13 +110,12 @@ public class OrderDaoFileImpl implements OrderDao {
         return OrderFromFile;
 
     }
-    
 
     private void loadOrders(LocalDate date) throws FlooringPersistenceException {
         Scanner scanner;
-        
+
         String formattedDate = date.format(DateTimeFormatter.ofPattern("MMddyyyy"));
-        String nameOfFile = "Orders_" + formattedDate+ ".txt";
+        String nameOfFile = "Orders_" + formattedDate + ".txt";
 
         try {
             scanner
@@ -122,23 +123,16 @@ public class OrderDaoFileImpl implements OrderDao {
                             new BufferedReader(
                                     new FileReader(nameOfFile)));
         } catch (FileNotFoundException e) {
+            //create a new file if there is not one
             Orders = new HashMap<>();
             return;
         }
-        String currentLine;
-        Order currentOrder;
-        
-        boolean firstLine = true;
+        //read first line 
+        scanner.nextLine();
         while (scanner.hasNextLine()) {
-            currentLine = scanner.nextLine();
-            if(firstLine){
-                firstLine =false;
-                continue;
-            }
-
-            currentOrder = unmarshallOrder(currentLine);
-
-            Orders.put(currentOrder.getOrderId(), currentOrder);
+          String  currentLine = scanner.nextLine();
+           Order currentOrder = unmarshallOrder(currentLine);
+           Orders.put(currentOrder.getOrderId(), currentOrder);
         }
         scanner.close();
     }
@@ -147,7 +141,7 @@ public class OrderDaoFileImpl implements OrderDao {
         String OrderAsText = anOrder.getOrderId() + DELIMITER;
         OrderAsText += anOrder.getCustomerName() + DELIMITER;
         OrderAsText += anOrder.getState() + DELIMITER;
-        OrderAsText += anOrder.getTax() + DELIMITER;
+        OrderAsText += anOrder.getTaxRate() + DELIMITER;
         OrderAsText += anOrder.getProductType() + DELIMITER;
         OrderAsText += anOrder.getArea() + DELIMITER;
         OrderAsText += anOrder.getCostPerSquareFoot() + DELIMITER;
@@ -163,39 +157,42 @@ public class OrderDaoFileImpl implements OrderDao {
 
     private void writeOrders(Order order) throws FlooringPersistenceException {
         PrintWriter out;
-        
+
 //        Order orderForDate = Orders.get(1);
 //        LocalDate orderDate = orderForDate.getDate();
-        LocalDate orderDate =order.getDate();
+        LocalDate orderDate = order.getDate();
         String formattedDate = orderDate.format(DateTimeFormatter.ofPattern("MMddyyyy"));
         String nameOfFile = "Orders_" + formattedDate + ".txt";
-      
-            try {
-                out = new PrintWriter(
-                        new FileWriter(nameOfFile));
-            } catch (IOException e) {
-                throw new FlooringPersistenceException(
-                        "Could not save order Data.", e);
-            }
-           
-            
-            String orderAsText;
-            for (Order currentOrder : Orders.values()) {
-                orderAsText = marshallOrder(currentOrder);
-                out.println(orderAsText);
-                out.flush();
-            }
-            out.close();
+        String header = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,"
+                + "CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
+
+        try {
+            out = new PrintWriter(
+                    new FileWriter(nameOfFile));
+        } catch (IOException e) {
+            throw new FlooringPersistenceException(
+                    "Could not save order Data.", e);
+        }
+
+        out.println(header);
+        for (Order currentOrder : Orders.values()) {
+            String orderAsText = marshallOrder(currentOrder);
+            out.println(orderAsText);
+            out.flush();
+        }
+        out.close();
 
     }
+
     public int getNextId(LocalDate date) throws FlooringPersistenceException {
-         int largestId = 0;
+        int largestId = 0;
         List<Integer> ids = new ArrayList<Integer>(Orders.keySet());
-        for(int currentId: ids)
-            if(largestId < currentId) {
+        for (int currentId : ids) {
+            if (largestId < currentId) {
                 largestId = currentId;
             }
-        return largestId+1;
-     }
-    
+        }
+        return largestId + 1;
+    }
+
 }

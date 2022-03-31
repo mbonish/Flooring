@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-
 /**
  *
  * @author mariana.bonish
@@ -50,21 +49,23 @@ public class FlooringController {
                 case 5:
                     exportData();
                 case 6:
-                    //quit
+                    keepGoing = false;
+                    break;
             }
         }
 
     }
+
     //will need to return a list 
-    private void viewAllOrders() throws FlooringValidationException, FlooringPersistenceException{
+    private void viewAllOrders() throws FlooringValidationException, FlooringPersistenceException {
         String userDate = view.getDateFromUser();
         LocalDate date = service.validateDate(userDate);
         //ask the users for a date- then display orders on the date
         List<Order> orders = service.getAllOrders(date);
         view.displayOrders(orders);
     }
-    
-    private void addOrder() throws FlooringValidationException, FlooringPersistenceException{
+
+    private void addOrder() throws FlooringValidationException, FlooringPersistenceException {
         String userDate = view.getDateFromUser();
         LocalDate date2 = service.validateDate(userDate);
         String customerName = view.getCustomerName();
@@ -72,38 +73,38 @@ public class FlooringController {
         String prodType = view.getProductType();
         int area = view.getArea();
         BigDecimal areaB = new BigDecimal(area);
-        
+
         Order priorOrder = new Order();
         priorOrder.setDate(date2);
         priorOrder.setCustomerName(customerName);
         priorOrder.setState(state);
         priorOrder.setArea(areaB);
         priorOrder.setProductType(prodType);
-        
+
         service.createOrder(priorOrder);
         service.calculateOrder(priorOrder);
-    
-        
+
         view.displayOrder(priorOrder);
-        
-        String confirmOrderDetails =view.confirmOrderDetails();
-        if(confirmOrderDetails.equals("y")){
+
+        String confirmOrderDetails = view.confirmOrderDetails();
+        if (confirmOrderDetails.equals("y")) {
             service.addOrder(priorOrder);
-        }      
+        }
+        
     }
-    
-    private void editOrder(){
+
+    private void editOrder() {
         //ask for date
         //can change name, state,product type and area
     }
-    
-    private void removeOrder(){
+
+    private void removeOrder() {
         //ask for date
         //display order information
         //ask for confirmation
     }
-    
-    private void exportData(){
-        
+
+    private void exportData() {
+
     }
 }

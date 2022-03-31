@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author mariana.bonish
  */
 public class Order {
-    
+    //set properties to private
     int orderId;
     LocalDate date; 
     String customerName;
@@ -30,6 +30,7 @@ public class Order {
     BigDecimal costPerSquareFoot;
     BigDecimal laborCostPerSquareFoot;
     BigDecimal laborCostTotal;
+ 
 
     public int getOrderId() {
         return orderId;
